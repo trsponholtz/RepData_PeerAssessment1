@@ -10,20 +10,28 @@ fig.height: 4
 
 ## Loading and preprocessing the data
 
-```{r setup, include=FALSE}
-library(dplyr)
-library(readr)
-```
 
-```{r}
+
+
+```r
 path <- "C:/Users/Todd/Desktop/CourseraCourses/JhuDataScience/ReproducibleResearch/activity.csv"
 activity_data <- read_csv(path,col_names=TRUE)
+```
+
+```
+## Parsed with column specification:
+## cols(
+##   steps = col_double(),
+##   date = col_date(format = ""),
+##   interval = col_double()
+## )
 ```
 
 
 ## What is mean total number of steps taken per day?
 
-```{r}
+
+```r
 totsteps <- activity_data %>% group_by(date) %>% summarize(total = sum(steps,na.rm=TRUE))
      
 hist(totsteps$total,
@@ -34,19 +42,32 @@ hist(totsteps$total,
         col="green")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
 The mean number of total steps per day is:
-```{r}
+
+```r
 mean(totsteps$total)
 ```
 
+```
+## [1] 9354.23
+```
+
 The median number of total steps per day is:
-```{r}
+
+```r
 median(totsteps$total)
+```
+
+```
+## [1] 10395
 ```
 
 ## What is the average daily activity pattern?
 
-```{r}
+
+```r
 daily_avg <- activity_data %>% group_by(interval) %>% summarize(average = mean(steps,na.rm=TRUE))
 
 plot(daily_avg$interval,daily_avg$average,
@@ -57,15 +78,26 @@ plot(daily_avg$interval,daily_avg$average,
      col="blue")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
 The maximum average number of steps taken in a 5-minute interval is:
-```{r}
+
+```r
 filter(daily_avg,average==max(daily_avg$average)) %>% select(interval)
+```
+
+```
+## # A tibble: 1 x 1
+##   interval
+##      <dbl>
+## 1      835
 ```
 
 ## Imputing missing values
 
 ### Replace missing values with mean
-```{r}
+
+```r
 impute.mean <- function(x) replace(x, is.na(x), mean(x, na.rm = TRUE))
 
 activity_data2 <- activity_data %>%
@@ -84,11 +116,14 @@ hist(totsteps2$total,
      col="red")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
 Replacing the missing values with the mean value for the given interval has increased both the mean and median values compared to the analysis excluding the missing values.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
+
+```r
 par(mfrow=c(2,1)) 
 
 activity_data$weekday <- (weekdays(activity_data$date) %in% c("Monday","Tuesday","Wednesday","Thursday","Friday"))
@@ -109,5 +144,7 @@ p2 <- plot(filter(daily_avg,weekday==1)$interval,filter(daily_avg,weekday==1)$av
            main="Average number of steps taken on weekdays, by 5-minute interval",
            col="red")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 On weekends (top graph), activity tends to increase later in the day and more gradually than on weekdays (bottom graph). Activity also appears to be more evenly distributed thoughout the day. The maximum average number of steps in a 5-minute interval is higher on weekdays.
